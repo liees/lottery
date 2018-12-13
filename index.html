@@ -160,7 +160,7 @@
             return [0.1 * Math.random() + 0.01, -(0.1 * Math.random() + 0.01)];
         };
         var getKey = function(item){
-            return item.name + '-' + item.phone;
+            return item.name;
         };
         var createHTML = function(){
             var html = [ '<ul>' ];
@@ -187,7 +187,7 @@
                     }
                 } while(choosed[key]);
                 choosed[key] = 1;
-                ret.push(member[id].name + '<br/>' + member[id].phone);
+                ret.push(member[id].name);
                 list[id].style.color = color;
             }
             localStorage.setItem('choosed', JSON.stringify(choosed));
