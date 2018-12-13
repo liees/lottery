@@ -135,11 +135,6 @@
 <div id="result" class="result"></div>
 <div id="tools" class="tools">
     <button
-        v-on="click: onClick($value)"
-        class="pure-button"
-        v-class="button-error: selected == $value"
-        v-repeat="btns">{{$value}}</button>
-    <button
         class="pure-button"
         v-on="click: toggle"
         v-class="
@@ -155,7 +150,6 @@
 <script type="text/javascript">
     (function(){
         var choosed = JSON.parse(localStorage.getItem('choosed')) || {};
-        console.log(choosed);
         var speed = function(){
             return [0.1 * Math.random() + 0.01, -(0.1 * Math.random() + 0.01)];
         };
@@ -179,17 +173,16 @@
             var list = canvas.getElementsByTagName('a');
             var color = '#' + ('00000' + Math.floor(Math.random() * 0xffffff)).slice(-6);
             var color = 'yellow';
-            for(var i = 0; i < count; i++){
-                do {
-                    var id = Math.ceil(Math.random() * total);
-                    if(member[id]){
-                        var key = getKey(member[id]);
-                    }
-                } while(choosed[key]);
-                choosed[key] = 1;
-                ret.push(member[id].name);
-                list[id].style.color = color;
-            }
+            do {
+                var id = Math.ceil(Math.random() * total);
+                if(member[id]){
+                    var key = getKey(member[id]);
+                }
+            } while(choosed[key]);
+            choosed[key] = 1;
+            ret.push(member[id].name);
+            list[id].style.color = color;
+            
             localStorage.setItem('choosed', JSON.stringify(choosed));
             return ret;
         };
@@ -231,14 +224,13 @@
                 toggle: function(){
                     if(this.running){
                         TagCanvas.SetSpeed('myCanvas', speed());
-                        var ret = lottery(this.selected);
+                        var ret = lottery(1);
                         $('#result').css('display', 'block').html('<span>' + ret.join('</span><span>') + '</span>');
                         TagCanvas.Reload('myCanvas');
                         setTimeout(function(){
                             localStorage.setItem(new Date().toString(), JSON.stringify(ret));
                             $('#main').addClass('mask');
                         }, 300);
-                        console.log(ret);
                     } else {
                         $('#result').css('display', 'none');
                         $('#main').removeClass('mask');
