@@ -135,6 +135,11 @@
 <div id="result" class="result"></div>
 <div id="tools" class="tools">
     <button
+        v-on="click: onClick($value)"
+        class="pure-button"
+        v-class="button-error: selected == $value"
+        v-repeat="btns">{{$value}}</button>
+    <button
         class="pure-button"
         v-on="click: toggle"
         v-class="
@@ -150,6 +155,7 @@
 <script type="text/javascript">
     (function(){
         var choosed = JSON.parse(localStorage.getItem('choosed')) || {};
+        console.log(choosed);
         var speed = function(){
             return [0.1 * Math.random() + 0.01, -(0.1 * Math.random() + 0.01)];
         };
@@ -168,39 +174,23 @@
             return html.join('');
         };
         var lottery = function(count){
-	    var ince = Number(localStorage.getItem('ince') || 0);
-	    var total = member.length;
-	    var ret = [];
+            var total = member.length;
+            var ret = [];
             var list = canvas.getElementsByTagName('a');
             var color = '#' + ('00000' + Math.floor(Math.random() * 0xffffff)).slice(-6);
             var color = 'yellow';
-	    var id, key;
-	    if (ince === 0) {
-		id = 14;
-	    	key = getKey(member[14]);
- 	    }
-	    if (ince === 1) {
-		id = 146;
-	        key = getKey(member[146]);
-            }
-	    if (ince === 2) {
-		id = 166;
-	    	key = getKey(member[166]);
-	    }
-	    if (ince > 2) {
+            for(var i = 0; i < count; i++){
                 do {
-                    id = Math.ceil(Math.random() * total);
+                    var id = Math.ceil(Math.random() * total);
                     if(member[id]){
-                        key = getKey(member[id]);
+                        var key = getKey(member[id]);
                     }
-            	} while(choosed[key]);
-	    }
-            choosed[key] = 1;
-            ret.push(member[id].name);
-            list[id].style.color = color;
+                } while(choosed[key]);
+                choosed[key] = 1;
+                ret.push(member[id].name);
+                list[id].style.color = color;
+            }
             localStorage.setItem('choosed', JSON.stringify(choosed));
-	    ince += 1;
- 	    localStorage.setItem('ince', ince);
             return ret;
         };
         var canvas = document.createElement('canvas');
@@ -241,7 +231,7 @@
                 toggle: function(){
                     if(this.running){
                         TagCanvas.SetSpeed('myCanvas', speed());
-                        var ret = lottery(1);
+                        var ret = lottery(this.selected);
                         $('#result').css('display', 'block').html('<span>' + ret.join('</span><span>') + '</span>');
                         TagCanvas.Reload('myCanvas');
                         setTimeout(function(){
